@@ -50,7 +50,17 @@ const L=[
 {h:"Watch your credits",p:"Each song, extend, and stem split uses credits. Check your balance before big stem jobs.",sc:{els:[[25,60,50,"Credits: 2,500"]],hl:0}},
 {h:"Use the PC for Studio",p:"Studio works best on a big screen with a mouse. Make songs on your phone, then edit them on the PC.",sc:{els:[[5,60,40,"📱 Create"],[55,60,40,"🖥 Studio"]],hl:1}}]}
 ];
-const A=document.getElementById('app');let cur=0,st=0;
+const A=document.getElementById('app');
+let au=null,key=null,auto=localStorage.getItem('auto')==='1',rate=+(localStorage.getItem('rate')||1);
+function stopA(){if(au){au.pause();au=null}if(window.speechSynthesis)speechSynthesis.cancel();mark(false)}
+function mark(on){const t=document.getElementById('rt');if(t)t.classList.toggle('reading',on);const b=document.getElementById('pp');if(b)b.textContent=on?'⏸ Pause':'🔊 Play narration'}
+function speakFallback(){if(!window.speechSynthesis)return mark(false);const u=new SpeechSynthesisUtterance(NARR[key]||'');u.rate=rate;u.lang='en-US';u.onend=()=>mark(false);speechSynthesis.speak(u);mark(true)}
+function playA(){stopA();au=new Audio('audio/'+key+'.mp3');au.playbackRate=rate;au.onended=()=>mark(false);au.onerror=()=>{au=null;speakFallback()};
+ au.play().then(()=>mark(true)).catch(e=>{if(e&&e.name==='NotAllowedError'){mark(false)}else{au=null;speakFallback()}})}
+function toggleA(){const playing=(au&&!au.paused)||(window.speechSynthesis&&speechSynthesis.speaking);if(playing)stopA();else playA()}
+function player(k){key=k;return `<div class="aud"><button class="pp" id="pp">🔊 Play narration</button><label><input type="checkbox" id="ar" ${auto?'checked':''}>Auto-read</label><label>Speed <select id="sp">${[.75,1,1.25].map(r=>`<option value="${r}" ${r===rate?'selected':''}>${r}x</option>`).join('')}</select></label></div>`}
+function wire(){document.getElementById('pp').onclick=toggleA;document.getElementById('ar').onchange=e=>{auto=e.target.checked;localStorage.setItem('auto',auto?'1':'0')};
+ document.getElementById('sp').onchange=e=>{rate=+e.target.value;localStorage.setItem('rate',rate);if(au)au.playbackRate=rate};if(auto)playA()}let cur=0,st=0;
 function scene(sc){let h='<div class="stage" aria-label="Illustration"><span class="lbl">Illustration, not Suno\'s real screen</span>';
  (sc.tracks||[]).forEach((t,i)=>{h+=`<div class="track fadein" style="top:${20+i*44}px;background:${t[1]};animation-delay:${i*.2}s"><i></i><b style="position:relative;padding:6px;font-size:.7em;color:#000">${t[0]}</b></div>`});
  if(sc.tracks)h+='<div class="play"></div>';
@@ -59,15 +69,15 @@ function scene(sc){let h='<div class="stage" aria-label="Illustration"><span cla
  return h+'</div>'}
 function moveCur(sc){const c=document.getElementById('cur');if(!c)return;const e=sc.els[sc.hl];
  requestAnimationFrame(()=>requestAnimationFrame(()=>{c.style.left=`calc(${e[0]+e[2]/2}% - 17px)`;c.style.top=(e[1]+4)+'px';c.classList.add('tap')}))}
-function menu(){A.innerHTML='<h2>Lessons</h2><p class="note">Tap a lesson. Each one has animated, step-by-step pictures. Updated Nov 2026; Suno changes its screens often, so a button may look a little different on yours.</p><div class="menu">'+L.map((l,i)=>`<button data-i="${i}"><span>${i+1}.</span>${l.t}</button>`).join('')+'<button data-i="c"><span>★</span>Quick cheat sheet</button></div>';
+function menu(){stopA();A.innerHTML='<h2>Lessons</h2><p class="note">Tap a lesson. Each one has animated, step-by-step pictures. Updated Nov 2026; Suno changes its screens often, so a button may look a little different on yours.</p><div class="menu">'+L.map((l,i)=>`<button data-i="${i}"><span>${i+1}.</span>${l.t}</button>`).join('')+'<button data-i="c"><span>★</span>Quick cheat sheet</button></div>';
  A.querySelectorAll('.menu button').forEach(b=>b.onclick=()=>b.dataset.i==='c'?cheat():open(+b.dataset.i,0));scrollTo(0,0)}
-function open(i,s){cur=i;st=s;const l=L[i],x=l.s[s];
- A.innerHTML=`<h2>${i+1}. ${l.t}</h2><div class="prog"><div style="width:${(s+1)/l.s.length*100}%"></div></div><div class="step fadein"><p class="note">Step ${s+1} of ${l.s.length}</p><h3>${x.h}</h3>${scene(x.sc)}<p>${x.p}</p></div>
+function open(i,s){stopA();cur=i;st=s;const l=L[i],x=l.s[s];
+ A.innerHTML=`<h2>${i+1}. ${l.t}</h2><div class="prog"><div style="width:${(s+1)/l.s.length*100}%"></div></div><div class="step fadein"><p class="note">Step ${s+1} of ${l.s.length}</p><h3>${x.h}</h3>${player(`a${i}_${s}`)}${scene(x.sc)}<p id="rt">${x.p}</p></div>
  <div class="nav"><button class="sec" id="bk">◀ Back</button><button class="pri" id="nx">${s<l.s.length-1?'Next ▶':(i<L.length-1?'Next lesson ▶':'Finish ✓')}</button></div>`;
- moveCur(x.sc);
+ moveCur(x.sc);wire();
  document.getElementById('bk').onclick=()=>s>0?open(i,s-1):(i>0?open(i-1,L[i-1].s.length-1):menu());
  document.getElementById('nx').onclick=()=>s<l.s.length-1?open(i,s+1):(i<L.length-1?open(i+1,0):menu());scrollTo(0,0)}
-function cheat(){A.innerHTML=`<h2>Quick cheat sheet</h2><table>
+function cheat(){stopA();A.innerHTML=`<h2>Quick cheat sheet</h2>${player('cheat')}<table id="rt">
 <tr><th>I want to…</th><th>Do this</th><th>Plan</th></tr>
 <tr><td>Make a quick song</td><td>Create → Simple → describe → Create</td><td>Free+</td></tr>
 <tr><td>Use my lyrics</td><td>Create → Custom → Lyrics + Style → Create</td><td>Free+</td></tr>
@@ -83,6 +93,6 @@ function cheat(){A.innerHTML=`<h2>Quick cheat sheet</h2><table>
 <tr><td>Export everything</td><td>Studio → Export → Full Song / Selected Range / Multitrack (WAV)</td><td>Premier</td></tr>
 <tr><td>MP3 / WAV download</td><td>⋯ → Download. MP3 on every plan, WAV on Pro/Premier</td><td>Free / Pro+</td></tr>
 <tr><td>MIDI</td><td>Studio → select stem → Get MIDI</td><td>Premier</td></tr></table>
-<p class="note">Credit costs: Auto Split 50, Split from Mix 10 per stem, Advanced Split 10 per stem, Get MIDI 10. Source: help.suno.com (Sept 2026).</p>`;scrollTo(0,0)}
+<p class="note">Credit costs: Auto Split 50, Split from Mix 10 per stem, Advanced Split 10 per stem, Get MIDI 10. Source: help.suno.com (Sept 2026).</p>`;wire();scrollTo(0,0)}
 document.getElementById('homeBtn').onclick=menu;document.getElementById('cheatBtn').onclick=cheat;menu();
 if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});

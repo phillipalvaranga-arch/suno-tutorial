@@ -37,8 +37,13 @@ table{width:100%;border-collapse:collapse;font-size:.9em}td,th{border:1px solid 
 a{color:var(--acc2)}
 @media(max-width:500px){body{font-size:19px}.stage{height:270px}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+.aud{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:12px 0;padding:12px;background:#10233a;border:2px solid var(--acc2);border-radius:14px}
+.aud .pp{background:var(--acc2);color:#000;font-size:1.1em;min-width:170px}
+.aud label{display:flex;align-items:center;gap:8px;font-weight:700}.aud input{width:28px;height:28px}
+.aud select{font:inherit;padding:10px;border-radius:10px;background:#2b3550;color:#fff;border:2px solid #44507a}
+.reading{background:#ffd23f22;outline:3px solid var(--acc);border-radius:8px;transition:background .3s}
 </style></head><body>
 <header><h1>🎵 Suno Tutorial</h1><button class="sec" id="homeBtn">☰ Lessons</button><button class="sec" id="cheatBtn">📋 Cheat sheet</button></header>
 <main id="app"></main>
-<script src="app.js"></script>
+<script src="narr.js"></script><script src="app.js"></script>
 </body></html>
