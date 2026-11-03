@@ -1,0 +1,44 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Suno &amp; Suno Studio Tutorial</title>
+<meta name="theme-color" content="#0b0f1a">
+<link rel="manifest" href="manifest.json">
+<style>
+:root{--bg:#0b0f1a;--card:#161d2e;--txt:#fff;--mut:#d6dcef;--acc:#ffd23f;--acc2:#3fd2ff;--ok:#6dff9b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:20px/1.55 system-ui,Segoe UI,Roboto,sans-serif}
+header{padding:16px;background:#111827;border-bottom:3px solid var(--acc);display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+header h1{font-size:1.35em;margin:0;flex:1}
+button{font:inherit;font-weight:700;border:0;border-radius:12px;padding:14px 20px;cursor:pointer;min-height:56px}
+.pri{background:var(--acc);color:#000}.sec{background:#2b3550;color:#fff}
+main{max-width:900px;margin:auto;padding:16px}
+.menu button{display:block;width:100%;text-align:left;margin:10px 0;background:var(--card);color:#fff;border:2px solid #2f3a58}
+.menu button span{color:var(--acc);margin-right:10px}
+h2{font-size:1.5em;color:var(--acc);margin:.3em 0}
+.step{background:var(--card);border-radius:16px;padding:18px;border:2px solid #2f3a58}
+.step h3{margin:0 0 8px;font-size:1.25em}
+.note{color:var(--mut);font-size:.9em}.tag{display:inline-block;background:#3a2a00;color:var(--acc);border:1px solid var(--acc);border-radius:8px;padding:2px 8px;font-size:.8em;margin:2px}
+.stage{position:relative;height:300px;margin:14px 0;background:#0f1424;border:2px dashed #4a5a85;border-radius:14px;overflow:hidden}
+.stage .lbl{position:absolute;top:6px;right:10px;font-size:.7em;color:#ffb;background:#000a;padding:2px 8px;border-radius:6px;z-index:5}
+.ui{position:absolute;background:#232c45;border:2px solid #44507a;border-radius:10px;color:#fff;font-size:.75em;padding:8px 10px;display:flex;align-items:center}
+.ui.hl{animation:glow 1.2s infinite;border-color:var(--acc)}
+@keyframes glow{50%{box-shadow:0 0 0 6px #ffd23f66}}
+.cursor{position:absolute;width:34px;height:34px;border-radius:50%;background:#ffd23f99;border:3px solid #fff;z-index:6;transition:left 1s ease,top 1s ease;pointer-events:none}
+.cursor.tap{animation:tap .6s ease 1s 2}
+@keyframes tap{50%{transform:scale(.6);background:#fff}}
+.track{position:absolute;left:12px;right:12px;height:34px;border-radius:8px;overflow:hidden}
+.track i{position:absolute;inset:0;background:repeating-linear-gradient(90deg,#fff3 0 3px,transparent 3px 7px);animation:wave 2s linear infinite}
+@keyframes wave{to{background-position:28px 0}}
+.play{position:absolute;top:0;bottom:0;width:3px;background:var(--acc);animation:ph 4s linear infinite;z-index:4}
+@keyframes ph{from{left:12px}to{left:calc(100% - 12px)}}
+.fadein{animation:fi .8s ease both}@keyframes fi{from{opacity:0;transform:translateY(12px)}}
+.nav{display:flex;gap:10px;justify-content:space-between;margin-top:14px}
+.prog{height:10px;background:#2b3550;border-radius:6px;margin:10px 0}.prog div{height:100%;background:var(--acc);border-radius:6px;transition:width .4s}
+table{width:100%;border-collapse:collapse;font-size:.9em}td,th{border:1px solid #3a466a;padding:8px;vertical-align:top}th{background:#232c45;color:var(--acc)}
+a{color:var(--acc2)}
+@media(max-width:500px){body{font-size:19px}.stage{height:270px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style></head><body>
+<header><h1>🎵 Suno Tutorial</h1><button class="sec" id="homeBtn">☰ Lessons</button><button class="sec" id="cheatBtn">📋 Cheat sheet</button></header>
+<main id="app"></main>
+<script src="app.js"></script>
+</body></html>
